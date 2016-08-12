@@ -37,12 +37,12 @@ export function parseModifier(value) {
   }
   // Return percent of container
   const str = `${value}`.trim().toLowerCase();
-  if (str.indexOf('%')) {
+  if (str.indexOf('%') > -1) {
     const percent = (+ str.replace('%', '')) / 100;
     return (x, cx) => cx * percent;
   }
   // Return fixed value
-  return () => +(value.replace('px', ''));
+  return () => +(str.replace('px', ''));
 }
 
 export function prepareReturn(newW, newH, w, h) {
