@@ -1,0 +1,29 @@
+{
+  "homepage": "https://github.com/kristw/slimfit",
+  "main": "dist/slimfit.min.js",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "src",
+    "examples",
+    "docs",
+    "gruntFile.js",
+    "grunt/*.js",
+    "gulpfile.js",
+    "gulp/*.js"
+  ],
+  "name": "slimfit",
+  "description": "Slim library for fitting things",
+  "authors": [
+    "Krist Wongsuphasawat <krist.wongz@gmail.com> (http://kristw.yellowpigz.com)"
+  ],
+  "keywords": []
+}
