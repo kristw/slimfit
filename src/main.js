@@ -1,6 +1,6 @@
 import { isRequired, getDimension, parseModifier, prepareReturn } from './helper.js';
 
-export function fit(
+function fit(
   box = isRequired('box'),
   container = isRequired('container'),
   options = {}
@@ -46,3 +46,5 @@ export function fit(
     h
   );
 }
+
+export default { fit };
