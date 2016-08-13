@@ -1,4 +1,5 @@
 import slimfit from './main.js';
+import Dimension from './dimension.js';
 
 describe('slimfit', ()=>{
   describe('.fit(box, container, options)', ()=>{
@@ -10,74 +11,79 @@ describe('slimfit', ()=>{
     });
 
     describe('when mode is "basic" (default)', ()=>{
-      it('should fit container width but maintain same height by default', ()=>{
+      it('should not change anything by default', ()=>{
         expect(slimfit.fit(
           [100, 200],
           [200, 400]
         )).toEqual({
-          width: 200,
-          height: 200,
-          changed: true
+          dimension: new Dimension(100, 200),
+          changed: false
         });
       });
       describe('should fit container based on the given options {width, height}', ()=>{
-        it('when both are null, do nothing', ()=>{
+        it('when both are null, do nothing if the box already fits within the container', ()=>{
           expect(slimfit.fit(
             [100, 200], [200, 400], {
               width: null,
               height: null,
             }
           )).toEqual({
-            width: 100,
-            height: 200,
+            dimension: new Dimension(100, 200),
             changed: false
           });
         });
-        it('percentage', ()=>{
+        it('when both are null, make the box to fit within the container', ()=>{
+          expect(slimfit.fit(
+            [300, 500], [200, 400], {
+              width: null,
+              height: null,
+            }
+          )).toEqual({
+            dimension: new Dimension(200, 400),
+            changed: true
+          });
+        });
+        it('percentage - will make the box become % of container', ()=>{
           expect(slimfit.fit(
             [100, 200], [200, 400], {
               width: '100%',
               height: '50%',
             }
           )).toEqual({
-            width: 200,
-            height: 200,
+            dimension: new Dimension(200, 200),
             changed: true
           });
         });
-        it('number string', ()=>{
+        it('number string - will make the box dimension that value', ()=>{
           expect(slimfit.fit(
             [100, 200], [200, 400], {
               width: '100',
               height: '50',
             }
           )).toEqual({
-            width: 100,
-            height: 50,
+            dimension: new Dimension(100, 50),
             changed: true
           });
         });
-        it('number with string "px"', ()=>{
+        it('number with string "px" - will make the box dimension that value', ()=>{
           expect(slimfit.fit(
             [100, 200], [200, 400], {
               width: '100px',
               height: '50px',
             }
           )).toEqual({
-            width: 100,
-            height: 50,
+            dimension: new Dimension(100, 50),
             changed: true
           });
         });
-        it('number', ()=>{
+        it('number - will make the box dimension that value', ()=>{
           expect(slimfit.fit(
             [100, 200], [200, 400], {
               width: 100,
               height: 200,
             }
           )).toEqual({
-            width: 100,
-            height: 200,
+            dimension: new Dimension(100, 200),
             changed: false
           });
         });
@@ -93,8 +99,7 @@ describe('slimfit', ()=>{
               ratio: 16/9
             }
           )).toEqual({
-            width: 800,
-            height: 450,
+            dimension: new Dimension(800, 450),
             changed: true
           });
           expect(slimfit.fit(
@@ -103,8 +108,7 @@ describe('slimfit', ()=>{
               ratio: 9/16
             }
           )).toEqual({
-            width: 450,
-            height: 800,
+            dimension: new Dimension(450, 800),
             changed: true
           });
         });
@@ -117,8 +121,7 @@ describe('slimfit', ()=>{
               height: 400,
             }
           )).toEqual({
-            width: 400,
-            height: 225,
+            dimension: new Dimension(400, 225),
             changed: true
           });
         });
@@ -131,8 +134,7 @@ describe('slimfit', ()=>{
               height: '50%',
             }
           )).toEqual({
-            width: 400,
-            height: 225,
+            dimension: new Dimension(400, 225),
             changed: true
           });
         });

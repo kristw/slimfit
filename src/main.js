@@ -1,4 +1,10 @@
-import { isRequired, getDimension, parseModifier, prepareReturn } from './helper.js';
+import {
+  isRequired,
+  parseModifier,
+  prepareReturn
+} from './helper.js';
+
+import Dimension from './dimension.js';
 
 function fit(
   box = isRequired('box'),
@@ -8,43 +14,36 @@ function fit(
   const {
     mode = 'basic',
     // for both mode
-    width = '100%',
+    width = null,
     height = null,
     // for aspectRatio mode
     ratio = 1,
   } = options;
 
-  const [w, h] = getDimension(box);
-  const [cw, ch] = getDimension(container);
+  const boxDim = new Dimension(box);
+  const [w, h] = boxDim.toArray();
+  const [cw, ch] = new Dimension(container).toArray();
   const wFn = parseModifier(width);
   const hFn = parseModifier(height);
 
+  let dim;
   if (mode === 'aspectRatio') {
     const maxW = wFn(cw, cw);
     const maxH = hFn(ch, ch);
     const newWFromHeight = Math.floor(ratio * maxH);
     if (newWFromHeight <= maxW) {
-      return prepareReturn(
-        newWFromHeight,
-        maxH,
-        w,
-        h
-      );
+      dim = new Dimension(newWFromHeight, maxH);
+    } else {
+      dim = new Dimension(maxW, Math.floor(maxW / ratio));
     }
-    return prepareReturn(
-      maxW,
-      Math.floor(maxW / ratio),
-      w,
-      h
-    );
+  } else {
+    dim = new Dimension(wFn(w, cw), hFn(h, ch));
   }
 
-  return prepareReturn(
-    wFn(w, cw),
-    hFn(h, ch),
-    w,
-    h
-  );
+  return {
+    dimension: dim,
+    changed: !dim.isEqual(boxDim)
+  };
 }
 
 export default { fit };
