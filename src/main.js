@@ -8,21 +8,26 @@ function fit(
 ) {
   const {
     mode = 'basic',
-    // for both mode
+    // for basic mode
     width = null,
     height = null,
     // for aspectRatio mode
     ratio = 1,
+    maxWidth = null,
+    maxHeight = null,
   } = options;
 
   const boxDim = new Dimension(box);
-  const [w, h] = boxDim.toArray();
-  const [cw, ch] = new Dimension(container).toArray();
-  const wFn = parseModifier(width);
-  const hFn = parseModifier(height);
+  const w = boxDim.width;
+  const h = boxDim.height;
+  const containerDim = new Dimension(container);
+  const cw = containerDim.width;
+  const ch = containerDim.height;
 
   let dim;
   if (mode === 'aspectRatio') {
+    const wFn = parseModifier(maxWidth);
+    const hFn = parseModifier(maxHeight);
     const maxW = wFn(cw, cw);
     const maxH = hFn(ch, ch);
     const newWFromHeight = Math.floor(ratio * maxH);
@@ -32,6 +37,8 @@ function fit(
       dim = new Dimension(maxW, Math.floor(maxW / ratio));
     }
   } else {
+    const wFn = parseModifier(width);
+    const hFn = parseModifier(height);
     dim = new Dimension(wFn(w, cw), hFn(h, ch));
   }
 

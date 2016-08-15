@@ -117,8 +117,8 @@ describe('slimfit', ()=>{
             [100, 200], [800, 800], {
               mode: 'aspectRatio',
               ratio: 16/9,
-              width: 400,
-              height: 400,
+              maxWidth: 400,
+              maxHeight: 400,
             }
           )).toEqual({
             dimension: new Dimension(400, 225),
@@ -130,8 +130,8 @@ describe('slimfit', ()=>{
             [100, 200], [800, 800], {
               mode: 'aspectRatio',
               ratio: 16/9,
-              width: '50%',
-              height: '50%',
+              maxWidth: '50%',
+              maxHeight: '50%',
             }
           )).toEqual({
             dimension: new Dimension(400, 225),

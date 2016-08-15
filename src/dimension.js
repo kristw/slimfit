@@ -1,6 +1,4 @@
-import isElement from 'lodash/isElement.js';
-import isFunction from 'lodash/isFunction.js';
-import { isDefined } from './helper.js';
+import { isDefined, isElement, isFunction } from './helper.js';
 
 class Dimension {
 

@@ -62,56 +62,156 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	exports.fit = fit;
+	var _dimension = __webpack_require__(1);
 
-	var _helper = __webpack_require__(1);
+	var _dimension2 = _interopRequireDefault(_dimension);
+
+	var _helper = __webpack_require__(2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function fit() {
-	  var box = arguments.length <= 0 || arguments[0] === undefined ? isRequired('box') : arguments[0];
-	  var container = arguments.length <= 1 || arguments[1] === undefined ? isRequired('container') : arguments[1];
+	  var box = arguments.length <= 0 || arguments[0] === undefined ? (0, _helper.isRequired)('box') : arguments[0];
+	  var container = arguments.length <= 1 || arguments[1] === undefined ? (0, _helper.isRequired)('container') : arguments[1];
 	  var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 	  var _options$mode = options.mode;
 	  var mode = _options$mode === undefined ? 'basic' : _options$mode;
 	  var _options$width = options.width;
-	  var width = _options$width === undefined ? '100%' : _options$width;
+	  var width = _options$width === undefined ? null : _options$width;
 	  var _options$height = options.height;
 	  var height = _options$height === undefined ? null : _options$height;
 	  var _options$ratio = options.ratio;
 	  var ratio = _options$ratio === undefined ? 1 : _options$ratio;
 
-	  var _getDimension = (0, _helper.getDimension)(box);
 
-	  var _getDimension2 = _slicedToArray(_getDimension, 2);
+	  var boxDim = new _dimension2.default(box);
 
-	  var w = _getDimension2[0];
-	  var h = _getDimension2[1];
+	  var _boxDim$toArray = boxDim.toArray();
 
-	  var _getDimension3 = (0, _helper.getDimension)(container);
+	  var _boxDim$toArray2 = _slicedToArray(_boxDim$toArray, 2);
 
-	  var _getDimension4 = _slicedToArray(_getDimension3, 2);
+	  var w = _boxDim$toArray2[0];
+	  var h = _boxDim$toArray2[1];
 
-	  var cw = _getDimension4[0];
-	  var ch = _getDimension4[1];
+	  var _toArray = new _dimension2.default(container).toArray();
+
+	  var _toArray2 = _slicedToArray(_toArray, 2);
+
+	  var cw = _toArray2[0];
+	  var ch = _toArray2[1];
 
 	  var wFn = (0, _helper.parseModifier)(width);
 	  var hFn = (0, _helper.parseModifier)(height);
 
+	  var dim = void 0;
 	  if (mode === 'aspectRatio') {
 	    var maxW = wFn(cw, cw);
 	    var maxH = hFn(ch, ch);
 	    var newWFromHeight = Math.floor(ratio * maxH);
 	    if (newWFromHeight <= maxW) {
-	      return (0, _helper.prepareReturn)(newWFromHeight, maxH, w, h);
+	      dim = new _dimension2.default(newWFromHeight, maxH);
+	    } else {
+	      dim = new _dimension2.default(maxW, Math.floor(maxW / ratio));
 	    }
-	    return (0, _helper.prepareReturn)(maxW, Math.floor(maxW / ratio), w, h);
+	  } else {
+	    dim = new _dimension2.default(wFn(w, cw), hFn(h, ch));
 	  }
 
-	  return (0, _helper.prepareReturn)(wFn(w, cw), hFn(h, ch), w, h);
+	  return {
+	    dimension: dim,
+	    changed: !dim.isEqual(boxDim)
+	  };
 	}
+
+	exports.default = { fit: fit };
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _helper = __webpack_require__(2);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Dimension = function () {
+	  function Dimension() {
+	    _classCallCheck(this, Dimension);
+
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+
+	    if (args.length === 1) {
+	      var inputOrGetter = args[0];
+	      var input = (0, _helper.isFunction)(inputOrGetter) ? inputOrGetter() : inputOrGetter;
+
+	      if (input instanceof Dimension) {
+	        this.width = input.width;
+	        this.height = input.height;
+	      } else if ((0, _helper.isElement)(input)) {
+	        this.width = input.clientWidth;
+	        this.height = input.clientHeight;
+	      } else if (Array.isArray(input)) {
+	        this.width = input[0];
+	        this.height = input[1];
+	      } else if ((0, _helper.isDefined)(input.width) && (0, _helper.isDefined)(input.height)) {
+	        this.width = input.width;
+	        this.height = input.height;
+	      } else {
+	        var err = new Error('Unsupported input. Must be either\n  DOMNode, Array or Object with field width and height,\n  or a function that returns any of the above.');
+	        err.value = inputOrGetter;
+	        throw err;
+	      }
+	    } else {
+	      var width = args[0];
+	      var height = args[1];
+
+	      this.width = width;
+	      this.height = height;
+	    }
+	  }
+
+	  _createClass(Dimension, [{
+	    key: 'isEqual',
+	    value: function isEqual(x) {
+	      if (x instanceof Dimension) {
+	        return this.width === x.width && this.height === x.height;
+	      } else {
+	        var dim2 = new Dimension(x);
+	        return this.width === dim2.width && this.height === dim2.height;
+	      }
+	    }
+	  }, {
+	    key: 'toArray',
+	    value: function toArray() {
+	      return [this.width, this.height];
+	    }
+	  }, {
+	    key: 'toObject',
+	    value: function toObject() {
+	      return {
+	        width: this.width,
+	        height: this.height
+	      };
+	    }
+	  }]);
+
+	  return Dimension;
+	}();
+
+	exports.default = Dimension;
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
 
 	'use strict';
 
@@ -124,20 +224,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.isRequired = isRequired;
 	exports.isDefined = isDefined;
 	exports.isNotDefined = isNotDefined;
-	exports.getDimension = getDimension;
+	exports.isElement = isElement;
 	exports.parseModifier = parseModifier;
-	exports.prepareReturn = prepareReturn;
-
-	var _isElement = __webpack_require__(2);
-
-	var _isElement2 = _interopRequireDefault(_isElement);
-
-	var _isFunction = __webpack_require__(8);
-
-	var _isFunction2 = _interopRequireDefault(_isFunction);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 	function isRequired(name) {
 	  throw new Error('Missing parameter ' + name);
 	}
@@ -150,31 +238,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return x === null || x === undefined;
 	}
 
-	function getDimension(boxOrBoxGetter) {
-	  var box = (0, _isFunction2.default)(boxOrBoxGetter) ? boxOrBoxGetter() : boxOrBoxGetter;
+	var isFunction = void 0;
+	if (typeof /./ != 'function' && (typeof Int8Array === 'undefined' ? 'undefined' : _typeof(Int8Array)) != 'object') {
+	  exports.isFunction = isFunction = function isFunction(obj) {
+	    return typeof obj == 'function' || false;
+	  };
+	} else {
+	  exports.isFunction = isFunction = function isFunction(fn) {
+	    var getType = {};
+	    return fn && getType.toString.call(fn) === '[object Function]';
+	  };
+	}
 
-	  if ((0, _isElement2.default)(box)) {
-	    return [box.clientWidth, box.clientHeight];
-	  } else if (Array.isArray(box)) {
-	    return box;
-	  } else if (isDefined(box.width) && isDefined(box.height)) {
-	    return [box.width, box.height];
-	  }
-	  var err = new Error('Unsupported box. Must be either\nDOMNode, Array or Object with field width and height,\nor a function that returns any of the above.');
-	  err.value = boxOrBoxGetter;
-	  throw err;
+	exports.isFunction = isFunction;
+	function isElement(obj) {
+	  return !!(obj && obj.nodeType === 1);
 	}
 
 	function parseModifier(value) {
 	  // Return current value
 	  if (isNotDefined(value)) {
-	    return function (x) {
-	      return x;
+	    return function (x, cx) {
+	      return Math.min(x, cx);
 	    };
 	  }
 	  // Return percent of container
 	  var str = ('' + value).trim().toLowerCase();
-	  if (str.indexOf('%')) {
+	  if (str.indexOf('%') > -1) {
 	    var _ret = function () {
 	      var percent = +str.replace('%', '') / 100;
 	      return {
@@ -188,302 +278,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	  // Return fixed value
 	  return function () {
-	    return +value.replace('px', '');
+	    return +str.replace('px', '');
 	  };
 	}
-
-	function prepareReturn(newW, newH, w, h) {
-	  return {
-	    width: newW,
-	    height: newH,
-	    changed: w !== newW || h !== newH
-	  };
-	}
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isObjectLike = __webpack_require__(3),
-	    isPlainObject = __webpack_require__(4);
-
-	/**
-	 * Checks if `value` is likely a DOM element.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a DOM element, else `false`.
-	 * @example
-	 *
-	 * _.isElement(document.body);
-	 * // => true
-	 *
-	 * _.isElement('<body>');
-	 * // => false
-	 */
-	function isElement(value) {
-	  return !!value && value.nodeType === 1 && isObjectLike(value) && !isPlainObject(value);
-	}
-
-	module.exports = isElement;
-
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is object-like. A value is object-like if it's not `null`
-	 * and has a `typeof` result of "object".
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-	 * @example
-	 *
-	 * _.isObjectLike({});
-	 * // => true
-	 *
-	 * _.isObjectLike([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObjectLike(_.noop);
-	 * // => false
-	 *
-	 * _.isObjectLike(null);
-	 * // => false
-	 */
-	function isObjectLike(value) {
-	  return !!value && typeof value == 'object';
-	}
-
-	module.exports = isObjectLike;
-
-
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getPrototype = __webpack_require__(5),
-	    isHostObject = __webpack_require__(7),
-	    isObjectLike = __webpack_require__(3);
-
-	/** `Object#toString` result references. */
-	var objectTag = '[object Object]';
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to resolve the decompiled source of functions. */
-	var funcToString = Function.prototype.toString;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/** Used to infer the `Object` constructor. */
-	var objectCtorString = funcToString.call(Object);
-
-	/**
-	 * Used to resolve the
-	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objectToString = objectProto.toString;
-
-	/**
-	 * Checks if `value` is a plain object, that is, an object created by the
-	 * `Object` constructor or one with a `[[Prototype]]` of `null`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.8.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 * }
-	 *
-	 * _.isPlainObject(new Foo);
-	 * // => false
-	 *
-	 * _.isPlainObject([1, 2, 3]);
-	 * // => false
-	 *
-	 * _.isPlainObject({ 'x': 0, 'y': 0 });
-	 * // => true
-	 *
-	 * _.isPlainObject(Object.create(null));
-	 * // => true
-	 */
-	function isPlainObject(value) {
-	  if (!isObjectLike(value) ||
-	      objectToString.call(value) != objectTag || isHostObject(value)) {
-	    return false;
-	  }
-	  var proto = getPrototype(value);
-	  if (proto === null) {
-	    return true;
-	  }
-	  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
-	  return (typeof Ctor == 'function' &&
-	    Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
-	}
-
-	module.exports = isPlainObject;
-
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var overArg = __webpack_require__(6);
-
-	/** Built-in value references. */
-	var getPrototype = overArg(Object.getPrototypeOf, Object);
-
-	module.exports = getPrototype;
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	/**
-	 * Creates a unary function that invokes `func` with its argument transformed.
-	 *
-	 * @private
-	 * @param {Function} func The function to wrap.
-	 * @param {Function} transform The argument transform.
-	 * @returns {Function} Returns the new function.
-	 */
-	function overArg(func, transform) {
-	  return function(arg) {
-	    return func(transform(arg));
-	  };
-	}
-
-	module.exports = overArg;
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is a host object in IE < 9.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
-	 */
-	function isHostObject(value) {
-	  // Many host objects are `Object` objects that can coerce to strings
-	  // despite having improperly defined `toString` methods.
-	  var result = false;
-	  if (value != null && typeof value.toString != 'function') {
-	    try {
-	      result = !!(value + '');
-	    } catch (e) {}
-	  }
-	  return result;
-	}
-
-	module.exports = isHostObject;
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isObject = __webpack_require__(9);
-
-	/** `Object#toString` result references. */
-	var funcTag = '[object Function]',
-	    genTag = '[object GeneratorFunction]';
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/**
-	 * Used to resolve the
-	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objectToString = objectProto.toString;
-
-	/**
-	 * Checks if `value` is classified as a `Function` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a function, else `false`.
-	 * @example
-	 *
-	 * _.isFunction(_);
-	 * // => true
-	 *
-	 * _.isFunction(/abc/);
-	 * // => false
-	 */
-	function isFunction(value) {
-	  // The use of `Object#toString` avoids issues with the `typeof` operator
-	  // in Safari 8 which returns 'object' for typed array and weak map constructors,
-	  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
-	  var tag = isObject(value) ? objectToString.call(value) : '';
-	  return tag == funcTag || tag == genTag;
-	}
-
-	module.exports = isFunction;
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is the
-	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
-	 * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-	 * @example
-	 *
-	 * _.isObject({});
-	 * // => true
-	 *
-	 * _.isObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObject(_.noop);
-	 * // => true
-	 *
-	 * _.isObject(null);
-	 * // => false
-	 */
-	function isObject(value) {
-	  var type = typeof value;
-	  return !!value && (type == 'object' || type == 'function');
-	}
-
-	module.exports = isObject;
-
 
 /***/ }
 /******/ ])
