@@ -25,11 +25,3 @@ export function parseModifier(value) {
   // Return fixed value
   return () => +(str.replace('px', ''));
 }
-
-export function prepareReturn(newW, newH, w, h) {
-  return {
-    width: newW,
-    height: newH,
-    changed: w !== newW || h !== newH,
-  };
-}

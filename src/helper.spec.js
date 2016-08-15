@@ -61,18 +61,4 @@ describe('helper', () => {
     });
   });
 
-  describe('.prepareReturn(newW, newH, w, h)', () => {
-    it('should return an object {width, height, changed}', () => {
-      expect(prepareReturn(100, 200, 100, 200)).toEqual({
-        width: 100,
-        height: 200,
-        changed: false,
-      });
-      expect(prepareReturn(100, 200, 50, 60)).toEqual({
-        width: 100,
-        height: 200,
-        changed: true,
-      });
-    });
-  });
 });

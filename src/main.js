@@ -1,10 +1,5 @@
-import {
-  isRequired,
-  parseModifier,
-  prepareReturn
-} from './helper.js';
-
 import Dimension from './dimension.js';
+import { isRequired, parseModifier } from './helper.js';
 
 function fit(
   box = isRequired('box'),
