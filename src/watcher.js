@@ -1,25 +1,35 @@
 import Dimension from './dimension.js';
-import { isRequired } from './helper.js';
 import { dispatch } from 'd3-dispatch';
+import { isRequired } from './helper.js';
 
 class Watcher {
   constructor({
     type = 'window',
-    target = window.document.body,
+    target = null,
     pollInterval = 500,
   }) {
     this.type = type;
     this.target = target;
-    this.pollInterval = pollInterval;
-    this.dispatcher = dispatch('change');
+
+    if (this.type === 'poll') {
+      if (!this.target) {
+        isRequired('target');
+      }
+      this.pollInterval = pollInterval;
+    }
+
+    this.dispatcher = dispatch('targetResized');
     this.listener = this.checkForChange.bind(this);
   }
 
   checkForChange() {
+    if (!this.target) {
+      this.dispatcher.call('targetResized');
+    }
     const newDim = new Dimension(this.target);
     if (!newDim.isEqual(this.currentDim)) {
       this.currentDim = newDim;
-      this.dispatcher.call('change', this, newDim);
+      this.dispatcher.call('targetResized');
     }
     return this;
   }
