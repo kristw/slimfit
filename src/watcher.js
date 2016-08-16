@@ -5,40 +5,20 @@ import { dispatch } from 'd3-dispatch';
 class Watcher {
   constructor({
     type = 'window',
-    target = null,
+    target = window.document.body,
     pollInterval = 500,
   }) {
     this.type = type;
     this.target = target;
+    this.pollInterval = pollInterval;
     this.dispatcher = dispatch('change');
     this.listener = this.checkForChange.bind(this);
-
-    if (type === 'window') {
-      if (this.target) {
-        this.currentDim = new Dimension(this.target);
-      }
-      window.addEventListener('resize', this.listener);
-    } else if (type === 'poll') {
-      if (target === null) {
-        isRequired('target');
-      }
-      this.currentDim = new Dimension(this.target);
-      this.pollInterval = pollInterval;
-      this.intervalId = window.setInterval(this.listener, this.pollInterval);
-    }
-  }
-
-  hasChanged() {
-    const newDim = new Dimension(this.target);
-    if (!this.currentDim || !newDim.isEqual(this.currentDim)) {
-      return newDim;
-    }
-    return false;
   }
 
   checkForChange() {
-    const newDim = this.hasChanged();
-    if (newDim) {
+    const newDim = new Dimension(this.target);
+    if (!newDim.isEqual(this.currentDim)) {
+      this.currentDim = newDim;
       this.dispatcher.call('change', this, newDim);
     }
     return this;
@@ -54,14 +34,22 @@ class Watcher {
     return this;
   }
 
-  destroy() {
+  start() {
+    this.currentDim = new Dimension(this.target);
+    if (this.type === 'window') {
+      window.addEventListener('resize', this.listener);
+    } else if (this.type === 'poll') {
+      this.intervalId = window.setInterval(this.listener, this.pollInterval);
+    }
+    return this;
+  }
+
+  stop() {
     if (this.type === 'window') {
       window.removeEventListener(this.listener);
     } else if (this.type === 'poll' && this.intervalId) {
       window.clearInterval(this.intervalId);
     }
-
-    this.dispatcher.on('change', null);
     return this;
   }
 }
