@@ -11,19 +11,17 @@ export function isNotDefined(x) {
   return x === null || x === undefined;
 }
 
-let isFunction;
-if (typeof /./ != 'function' && typeof Int8Array != 'object') {
-  isFunction = function(obj) {
-    return typeof obj == 'function' || false;
-  };
-} else {
-  isFunction = function(fn) {
-    var getType = {};
-    return fn && getType.toString.call(fn) === '[object Function]';
+export const isFunction = (function () {
+  if (typeof /./ !== 'function' && typeof Int8Array !== 'object') {
+    return function (obj) {
+      return typeof obj === 'function' || false;
+    };
   }
-}
-
-export { isFunction };
+  return function (fn) {
+    const getType = {};
+    return fn && getType.toString.call(fn) === '[object Function]';
+  };
+}());
 
 export function isElement(obj) {
   return !!(obj && obj.nodeType === 1);

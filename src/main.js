@@ -9,7 +9,7 @@ function fit(
   const {
     mode = 'basic',
     // for basic mode
-    width = null,
+    width = '100%',
     height = null,
     // for aspectRatio mode
     ratio = 1,
@@ -44,7 +44,7 @@ function fit(
 
   return {
     dimension: dim,
-    changed: !dim.isEqual(boxDim)
+    changed: !dim.isEqual(boxDim),
   };
 }
 

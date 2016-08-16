@@ -1,6 +1,6 @@
 import Dimension from './dimension.js';
 
-describe('Dimension', ()=>{
+describe('Dimension', () => {
   describe('constructor(inputOrGetter)', () => {
     describe('when input is a getter function', () => {
       it('should return dimension from DOMNode', () => {

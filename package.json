@@ -69,5 +69,8 @@
   "repository": "kristw/slimfit",
   "bugs": {
     "url": "https://github.com/kristw/slimfit/issues"
+  },
+  "dependencies": {
+    "d3-dispatch": "^1.0.1"
   }
 }

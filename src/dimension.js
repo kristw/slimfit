@@ -2,7 +2,7 @@ import { isDefined, isElement, isFunction } from './helper.js';
 
 class Dimension {
 
-  constructor(...args){
+  constructor(...args) {
     if (args.length === 1) {
       const inputOrGetter = args[0];
       const input = isFunction(inputOrGetter) ? inputOrGetter() : inputOrGetter;
@@ -36,10 +36,9 @@ class Dimension {
   isEqual(x) {
     if (x instanceof Dimension) {
       return this.width === x.width && this.height === x.height;
-    } else {
-      const dim2 = new Dimension(x);
-      return this.width === dim2.width && this.height === dim2.height;
     }
+    const dim2 = new Dimension(x);
+    return this.width === dim2.width && this.height === dim2.height;
   }
 
   toArray() {
@@ -49,7 +48,7 @@ class Dimension {
   toObject() {
     return {
       width: this.width,
-      height: this.height
+      height: this.height,
     };
   }
 

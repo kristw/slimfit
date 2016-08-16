@@ -2,9 +2,7 @@ import {
   isRequired,
   isDefined,
   isNotDefined,
-  getDimension,
   parseModifier,
-  prepareReturn,
 } from './helper.js';
 
 describe('helper', () => {
@@ -60,5 +58,4 @@ describe('helper', () => {
       expect(parseModifier(80)(10, 20)).toEqual(80);
     });
   });
-
 });
