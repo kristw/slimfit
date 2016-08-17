@@ -18,8 +18,8 @@ class Watcher {
       this.pollInterval = pollInterval;
     }
 
-    this.dispatcher = dispatch('targetResized');
-    this.listener = this.fireIfTargetChanged.bind(this);
+    this.dispatcher = dispatch('change');
+    this.listener = this.fireIfNecessary.bind(this);
     this.isWatching = false;
   }
 
@@ -35,9 +35,9 @@ class Watcher {
     return false;
   }
 
-  fireIfTargetChanged() {
+  fireIfNecessary() {
     if (this.hasTargetChanged()) {
-      this.dispatcher.call('targetResized');
+      this.dispatcher.call('change');
     }
     return this;
   }
@@ -74,6 +74,12 @@ class Watcher {
       }
       this.isWatching = false;
     }
+    return this;
+  }
+
+  destroy() {
+    this.stop();
+    this.off('change');
     return this;
   }
 }
