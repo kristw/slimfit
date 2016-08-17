@@ -1,5 +1,5 @@
 import Dimension from './Dimension.js';
-import { isRequired, parseModifier } from './helper.js';
+import { isRequired, parseModifier } from './Helper.js';
 
 class Fitter {
   constructor(options = {}) {

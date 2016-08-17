@@ -1,4 +1,4 @@
-import { isDefined, isElement, isFunction } from './helper.js';
+import { isDefined, isElement, isFunction } from './Helper.js';
 
 class Dimension {
 
