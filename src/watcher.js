@@ -4,16 +4,16 @@ import { isRequired } from './Helper.js';
 
 class Watcher {
   constructor({
-    type = 'window',
+    type = Watcher.TYPE_WINDOW,
     target = null,
     pollInterval = 500,
-  }) {
+  } = {}) {
     this.type = type;
     this.target = target;
 
-    if (this.type === 'poll') {
+    if (this.type === Watcher.TYPE_POLLING) {
       if (!this.target) {
-        isRequired('target');
+        isRequired('options.target');
       }
       this.pollInterval = pollInterval;
     }
@@ -28,7 +28,7 @@ class Watcher {
       return true;
     }
     const newDim = new Dimension(this.target);
-    if (!newDim.isEqual(this.currentDim)) {
+    if (!this.currentDim || !newDim.isEqual(this.currentDim)) {
       this.currentDim = newDim;
       return true;
     }
@@ -55,9 +55,9 @@ class Watcher {
   start() {
     if (!this.isWatching) {
       this.currentDim = new Dimension(this.target);
-      if (this.type === 'window') {
+      if (this.type === Watcher.TYPE_WINDOW) {
         window.addEventListener('resize', this.listener);
-      } else if (this.type === 'poll') {
+      } else if (this.type === Watcher.TYPE_POLLING) {
         this.intervalId = window.setInterval(this.listener, this.pollInterval);
       }
       this.isWatching = true;
@@ -67,9 +67,9 @@ class Watcher {
 
   stop() {
     if (this.isWatching) {
-      if (this.type === 'window') {
+      if (this.type === Watcher.TYPE_WINDOW) {
         window.removeEventListener(this.listener);
-      } else if (this.type === 'poll' && this.intervalId) {
+      } else if (this.type === Watcher.TYPE_POLLING && this.intervalId) {
         window.clearInterval(this.intervalId);
       }
       this.isWatching = false;
@@ -77,5 +77,8 @@ class Watcher {
     return this;
   }
 }
+
+Watcher.TYPE_WINDOW = 'window';
+Watcher.TYPE_POLLING = 'polling';
 
 export default Watcher;
