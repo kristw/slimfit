@@ -1,4 +1,4 @@
-import Dimension from './dimension.js';
+import Dimension from './Dimension.js';
 
 describe('Dimension', () => {
   describe('constructor(inputOrGetter)', () => {

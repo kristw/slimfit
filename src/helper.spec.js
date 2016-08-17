@@ -3,7 +3,7 @@ import {
   isDefined,
   isNotDefined,
   parseModifier,
-} from './helper.js';
+} from './Helper.js';
 
 describe('helper', () => {
   describe('.isRequired(name)', () => {

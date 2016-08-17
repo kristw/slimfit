@@ -1,6 +1,6 @@
-import Dimension from './dimension.js';
+import Dimension from './Dimension.js';
 import { dispatch } from 'd3-dispatch';
-import { isRequired } from './helper.js';
+import { isRequired } from './Helper.js';
 
 class Watcher {
   constructor({
@@ -20,6 +20,7 @@ class Watcher {
 
     this.dispatcher = dispatch('targetResized');
     this.listener = this.checkForChange.bind(this);
+    this.isWatching = false;
   }
 
   checkForChange() {
@@ -45,20 +46,30 @@ class Watcher {
   }
 
   start() {
-    this.currentDim = new Dimension(this.target);
-    if (this.type === 'window') {
-      window.addEventListener('resize', this.listener);
-    } else if (this.type === 'poll') {
-      this.intervalId = window.setInterval(this.listener, this.pollInterval);
+    if (!this.isWatching) {
+      this.currentDim = new Dimension(this.target);
+      if (this.type === 'window') {
+        window.addEventListener('resize', this.listener);
+      } else if (this.type === 'poll') {
+        this.intervalId = window.setInterval(this.listener, this.pollInterval);
+      }
+      this.isWatching = true;
     }
     return this;
   }
 
+  resume() {
+    return this.start();
+  }
+
   stop() {
-    if (this.type === 'window') {
-      window.removeEventListener(this.listener);
-    } else if (this.type === 'poll' && this.intervalId) {
-      window.clearInterval(this.intervalId);
+    if (this.isWatching) {
+      if (this.type === 'window') {
+        window.removeEventListener(this.listener);
+      } else if (this.type === 'poll' && this.intervalId) {
+        window.clearInterval(this.intervalId);
+      }
+      this.isWatching = false;
     }
     return this;
   }
