@@ -1,4 +1,5 @@
 import Watcher from './Watcher.js';
+import Dimension from './Dimension.js';
 
 describe('Watcher', ()=>{
   describe('new Watcher(options)', ()=>{
@@ -44,6 +45,31 @@ describe('Watcher', ()=>{
       expect(watcher.hasTargetChanged()).toBeTruthy();
       x = [100, 100];
       expect(watcher.hasTargetChanged()).toBeTruthy();
+    });
+  });
+
+  describe('.fireIfNecessary()', ()=>{
+    it('should fire event "change" if the target is changed', done=>{
+      let x = [200, 200];
+      function targetGetter() { return x; }
+      const watcher = new Watcher({ target: targetGetter })
+        .on('change', dim => {
+          expect(dim).toEqual(new Dimension(200, 200))
+          done();
+        })
+      watcher.fireIfNecessary();
+    });
+    it('should not fire if the target is not changed', done=>{
+      let x = [200, 200];
+      function targetGetter() { return x; }
+      const watcher = new Watcher({ target: targetGetter })
+        .on('change', () => {
+          fail('should not fire event "change"');
+          done();
+        })
+      watcher.hasTargetChanged();
+      watcher.fireIfNecessary();
+      window.setTimeout(done, 10);
     });
   });
 

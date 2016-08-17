@@ -37,7 +37,7 @@ class Watcher {
 
   fireIfNecessary() {
     if (this.hasTargetChanged()) {
-      this.dispatcher.call('change');
+      this.dispatcher.call('change', this, this.currentDim);
     }
     return this;
   }

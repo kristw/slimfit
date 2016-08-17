@@ -13,4 +13,8 @@ describe('slimfit', ()=>{
     expect(slimfit.Watcher).toBeDefined();
     expect(slimfit.Watcher).toEqual(jasmine.any(Function));
   });
+  it('should have class FitWatcher', ()=>{
+    expect(slimfit.FitWatcher).toBeDefined();
+    expect(slimfit.FitWatcher).toEqual(jasmine.any(Function));
+  });
 });
