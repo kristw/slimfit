@@ -19,17 +19,24 @@ class Watcher {
     }
 
     this.dispatcher = dispatch('targetResized');
-    this.listener = this.checkForChange.bind(this);
+    this.listener = this.fireIfTargetChanged.bind(this);
     this.isWatching = false;
   }
 
-  checkForChange() {
+  hasTargetChanged() {
     if (!this.target) {
-      this.dispatcher.call('targetResized');
+      return true;
     }
     const newDim = new Dimension(this.target);
     if (!newDim.isEqual(this.currentDim)) {
       this.currentDim = newDim;
+      return true;
+    }
+    return false;
+  }
+
+  fireIfTargetChanged() {
+    if (this.hasTargetChanged()) {
       this.dispatcher.call('targetResized');
     }
     return this;
@@ -56,10 +63,6 @@ class Watcher {
       this.isWatching = true;
     }
     return this;
-  }
-
-  resume() {
-    return this.start();
   }
 
   stop() {
