@@ -48,7 +48,7 @@ describe('Watcher', ()=>{
     });
   });
 
-  describe('.fireIfNecessary()', ()=>{
+  describe('.check()', ()=>{
     it('should fire event "change" if the target is changed', done=>{
       let x = [200, 200];
       function targetGetter() { return x; }
@@ -57,7 +57,7 @@ describe('Watcher', ()=>{
           expect(dim).toEqual(new Dimension(200, 200))
           done();
         })
-      watcher.fireIfNecessary();
+      watcher.check();
     });
     it('should not fire if the target is not changed', done=>{
       let x = [200, 200];
@@ -68,8 +68,98 @@ describe('Watcher', ()=>{
           done();
         })
       watcher.hasTargetChanged();
-      watcher.fireIfNecessary();
+      watcher.check();
       window.setTimeout(done, 10);
+    });
+  });
+
+  describe('.start()', ()=>{
+    it('should set watcher.isWatching to true', ()=>{
+      let x = [200, 200];
+      function targetGetter() { return x; }
+      const watcher = new Watcher({ target: targetGetter })
+      expect(watcher.isWatching).toBeFalsy();
+      watcher.start();
+      expect(watcher.isWatching).toBeTruthy();
+      watcher.stop();
+    });
+    it('should check after every window.resize event when type is Watcher.TYPE_WINDOW', done=>{
+      const watcher = new Watcher();
+      watcher.throttledCheck = dim => {
+        watcher.stop();
+        done();
+      };
+      watcher.start();
+      window.dispatchEvent(new Event('resize', {"bubbles":true, "cancelable":false}));
+    });
+    it('should check periodically when type is Watcher.TYPE_POLLING', done=>{
+      let x = [200, 200];
+      function targetGetter() { return x; }
+      const watcher = new Watcher({
+        type: Watcher.TYPE_POLLING,
+        target: targetGetter
+      });
+      let i = 0;
+      const realCheck = watcher.check;
+      watcher.check = dim => {
+        realCheck();
+        if (i===0) {
+          expect(watcher.currentDim).toEqual(new Dimension(200, 200));
+          i++;
+        } else if (i===1) {
+          expect(watcher.currentDim).toEqual(new Dimension(100, 200));
+          watcher.stop();
+          done();
+        }
+      };
+      watcher.start();
+      window.setTimeout(() => {
+        x[0] = 100;
+      }, 600);
+    });
+  });
+
+  describe('.stop()', ()=>{
+    it('should set watcher.isWatching to false', ()=>{
+      let x = [200, 200];
+      function targetGetter() { return x; }
+      const watcher = new Watcher({ target: targetGetter })
+      expect(watcher.isWatching).toBeFalsy();
+      watcher.start();
+      expect(watcher.isWatching).toBeTruthy();
+      watcher.stop();
+      expect(watcher.isWatching).toBeFalsy();
+    });
+    it('should not listen to window resize anymore', done=>{
+      const watcher = new Watcher();
+      watcher.throttledCheck = dim => {
+        fail('should not check after stop');
+      };
+      watcher.start();
+      watcher.stop();
+      window.dispatchEvent(new Event('resize', {"bubbles":true, "cancelable":false}));
+      window.setTimeout(() => done(), 600);
+    });
+    it('should not check every given interval anymore', done=>{
+      let x = [200, 200];
+      function targetGetter() { return x; }
+      const watcher = new Watcher({
+        type: Watcher.TYPE_POLLING,
+        target: targetGetter,
+        interval: 100,
+      });
+      let i = 0;
+      watcher.check = () => {
+        if (i===0) {
+          i++;
+        } else {
+          fail('should not check after stop');
+        }
+      };
+      watcher.start();
+      window.setTimeout(() => watcher.stop(), 100);
+      window.setTimeout(() => { x[0] = 100; }, 150);
+      window.setTimeout(() => done(), 200);
     });
   });
 

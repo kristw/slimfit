@@ -1,25 +1,25 @@
 import Dimension from './Dimension.js';
 import { dispatch } from 'd3-dispatch';
 import { isRequired } from './Helper.js';
+import throttle from 'lodash/throttle.js';
 
 class Watcher {
   constructor({
     type = Watcher.TYPE_WINDOW,
     target = null,
-    pollInterval = 500,
+    interval = 500,
   } = {}) {
-    this.type = type;
-    this.target = target;
-
-    if (this.type === Watcher.TYPE_POLLING) {
-      if (!this.target) {
-        isRequired('options.target');
-      }
-      this.pollInterval = pollInterval;
+    if (type === Watcher.TYPE_POLLING && !target) {
+      isRequired('options.target');
     }
 
+    this.type = type;
+    this.target = target;
+    this.interval = interval;
+
     this.dispatcher = dispatch('change');
-    this.listener = this.fireIfNecessary.bind(this);
+    this.check = this.check.bind(this);
+    this.throttledCheck = throttle(this.check, this.interval);
     this.isWatching = false;
   }
 
@@ -35,7 +35,7 @@ class Watcher {
     return false;
   }
 
-  fireIfNecessary() {
+  check() {
     if (this.hasTargetChanged()) {
       this.dispatcher.call('change', this, this.currentDim);
     }
@@ -54,11 +54,13 @@ class Watcher {
 
   start() {
     if (!this.isWatching) {
-      this.currentDim = new Dimension(this.target);
+      if (this.target) {
+        this.currentDim = new Dimension(this.target);
+      }
       if (this.type === Watcher.TYPE_WINDOW) {
-        window.addEventListener('resize', this.listener);
+        window.addEventListener('resize', this.throttledCheck);
       } else if (this.type === Watcher.TYPE_POLLING) {
-        this.intervalId = window.setInterval(this.listener, this.pollInterval);
+        this.intervalId = window.setInterval(this.check, this.interval);
       }
       this.isWatching = true;
     }
@@ -68,9 +70,10 @@ class Watcher {
   stop() {
     if (this.isWatching) {
       if (this.type === Watcher.TYPE_WINDOW) {
-        window.removeEventListener(this.listener);
+        window.removeEventListener('resize', this.throttledCheck);
       } else if (this.type === Watcher.TYPE_POLLING && this.intervalId) {
         window.clearInterval(this.intervalId);
+        this.intervalId = null;
       }
       this.isWatching = false;
     }

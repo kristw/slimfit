@@ -15,11 +15,15 @@ class FitWatcher extends Watcher {
     this.fit = () => fitter.fit(box, container);
   }
 
-  fireIfNecessary() {
+  check() {
     if (this.hasTargetChanged()) {
       const fitResult = this.fit();
       if (this.fitResult.changed) {
-        this.dispatcher.call('change', this, fitResult.dimension);
+        this.dispatcher.call(
+          'change',
+          this,
+          fitResult.dimension
+        );
       }
     }
     return this;
