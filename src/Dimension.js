@@ -16,7 +16,7 @@ class Dimension {
       } else if (Array.isArray(input)) {
         this.width = input[0];
         this.height = input[1];
-      } else if (isDefined(input.width) && isDefined(input.height)) {
+      } else if (isDefined(input) && isDefined(input.width) && isDefined(input.height)) {
         this.width = input.width;
         this.height = input.height;
       } else {
