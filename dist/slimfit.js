@@ -87,7 +87,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 
-	var _FitWatcher = __webpack_require__(16);
+	var _FitWatcher = __webpack_require__(15);
 
 	Object.defineProperty(exports, 'FitWatcher', {
 	  enumerable: true,
@@ -958,9 +958,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isFunction = __webpack_require__(13),
-	    isObject = __webpack_require__(8),
-	    isSymbol = __webpack_require__(14);
+	var isObject = __webpack_require__(8),
+	    isSymbol = __webpack_require__(13);
 
 	/** Used as references for various `Number` constants. */
 	var NAN = 0 / 0;
@@ -1011,7 +1010,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return NAN;
 	  }
 	  if (isObject(value)) {
-	    var other = isFunction(value.valueOf) ? value.valueOf() : value;
+	    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
 	    value = isObject(other) ? (other + '') : other;
 	  }
 	  if (typeof value != 'string') {
@@ -1031,55 +1030,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(8);
-
-	/** `Object#toString` result references. */
-	var funcTag = '[object Function]',
-	    genTag = '[object GeneratorFunction]';
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/**
-	 * Used to resolve the
-	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objectToString = objectProto.toString;
-
-	/**
-	 * Checks if `value` is classified as a `Function` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a function, else `false`.
-	 * @example
-	 *
-	 * _.isFunction(_);
-	 * // => true
-	 *
-	 * _.isFunction(/abc/);
-	 * // => false
-	 */
-	function isFunction(value) {
-	  // The use of `Object#toString` avoids issues with the `typeof` operator
-	  // in Safari 8 which returns 'object' for typed array and weak map constructors,
-	  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
-	  var tag = isObject(value) ? objectToString.call(value) : '';
-	  return tag == funcTag || tag == genTag;
-	}
-
-	module.exports = isFunction;
-
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isObjectLike = __webpack_require__(15);
+	var isObjectLike = __webpack_require__(14);
 
 	/** `Object#toString` result references. */
 	var symbolTag = '[object Symbol]';
@@ -1120,7 +1071,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports) {
 
 	/**
@@ -1155,7 +1106,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1209,7 +1160,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function check() {
 	      if (this.hasTargetChanged()) {
 	        var fitResult = this.fit();
-	        if (this.fitResult.changed) {
+	        if (fitResult.changed) {
 	          this.dispatcher.call('change', this, fitResult.dimension);
 	        }
 	      }
