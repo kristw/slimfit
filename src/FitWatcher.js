@@ -18,7 +18,7 @@ class FitWatcher extends Watcher {
   fireIfNecessary() {
     if (this.hasTargetChanged()) {
       const fitResult = this.fit();
-      if (this.fitResult.changed) {
+      if (fitResult.changed) {
         this.dispatcher.call('change', this, fitResult.dimension);
       }
     }
