@@ -10,7 +10,9 @@ Slim library for fitting things
 
 ### 1. Fit one box into another box
 
-To fit one box into another, first initialize a fitter with `new Fitter(fitOptions)`.
+To fit one box into another, first create a fitter.
+
+#### new Fitter(fitOptions)
 
 ```javascript
 // For basic fitting
@@ -31,7 +33,7 @@ const fitter2 = new Fitter({
 });
 ```
 
-The options `width`, `height`, `maxWidth`, `maxHeight` can be:
+The fields `width`, `height`, `maxWidth` and `maxHeight` in `fitOptions` can be:
 
 * `'10%'` => 10% of container
 * `10` => 10 pixels
@@ -39,7 +41,9 @@ The options `width`, `height`, `maxWidth`, `maxHeight` can be:
 * `'10'` => 10 pixels
 * `null` => (default) will make sure content is not larger than container
 
-Then call `.fit(content, container)`, which will return result with two fields: `changed` and `dimension`.
+#### fitter.fit(content, container)
+
+This function returns result with two fields: `changed` and `dimension`.
 
 - **changed:boolean** is true if the *content* need to be resized to the returned `dimension` in order to fit the *container*. It is false if the *content* is already fit (content's dimension == returned dimension).
 - **dimension:Dimension** is a `Dimension` object, which has field `width` and `height`. This is the dimension that will make the *content* fit *container* based on the given options when constructing the `Fitter`.
@@ -82,6 +86,8 @@ const result = fitter.fit(
 
 ### 2. Watch for box size change and notifies.
 
+#### new Watcher(watchOptions)
+
 ```javascript
 import { Watcher } from 'slimfit';
 
@@ -99,13 +105,14 @@ const watcher = new Watcher({
 
 ### 3. Watch for box size change and notifies if need to resize again to fit.
 
+#### new FitWatcher(content, container, fitOptions, watchOptions)
 
 ```javascript
 import { FitWatcher } from 'slimfit';
 
 const fitWatcher = new FitWatcher(
-  content,
-  container,
+  document.querySelector('.content'),
+  document.querySelector('.container'),
   fitOptions,
   watchOptions
 )
@@ -113,7 +120,6 @@ const fitWatcher = new FitWatcher(
   // do something
 })
 .start();
-
 ```
 
 ## Install
