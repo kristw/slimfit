@@ -10,10 +10,12 @@ Slim library for fitting things
 
 ### 1. Fit one box into another box
 
-To fit one box into another, first initialize a fitter with `new Fitter(options)`.
+To fit one box into another, first initialize a fitter with `new Fitter(fitOptions)`.
 
 ```javascript
 // For basic fitting
+import { Fitter } from 'slimfit';
+
 const fitter = new Fitter({
   mode: 'basic', // if mode is not specified, use 'basic' by default
   width: '100%', // (optional) 100% of container
@@ -21,7 +23,7 @@ const fitter = new Fitter({
 });
 
 // To keep aspect ratio of the content
-const fitter = new Fitter({
+const fitter2 = new Fitter({
   mode: 'aspectRatio',
   ratio: 16/9,
   maxWidth: 1600, // (optional)
@@ -39,11 +41,11 @@ The options `width`, `height`, `maxWidth`, `maxHeight` can be:
 
 Then call `.fit(content, container)`, which will return result with two fields: `changed` and `dimension`.
 
-- `changed` is true if the *content* need to be resized to the returned *dimension* in order to fit the *container*. It is false if the *content* is already fit (content's dimension == returned dimension).
-- `dimension` is a Dimension object, which has field `width` and `height`. This is the dimension that will make the *content* fit *container* based on the given options when constructing the `Fitter`.
+- **changed:boolean** is true if the *content* need to be resized to the returned `dimension` in order to fit the *container*. It is false if the *content* is already fit (content's dimension == returned dimension).
+- **dimension:Dimension** is a `Dimension` object, which has field `width` and `height`. This is the dimension that will make the *content* fit *container* based on the given options when constructing the `Fitter`.
 
 ```javascript
-// 1) Support dom elements
+// 1) Box can be DOM element
 const result = fitter.fit(
   document.querySelector('.content'),
   document.querySelector('.container')
@@ -52,7 +54,7 @@ const result = fitter.fit(
 ```
 
 ```javascript
-// 2) Support any Object with field width and height
+// 2) Box can be any Object with field width and height
 const result = fitter.fit(
   { width: 100, height: 200},
   { width: 400, height: 400}
@@ -61,7 +63,7 @@ const result = fitter.fit(
 ```
 
 ```javascript
-// 3) Support array of dimension [width, height]
+// 3) Box can be a dimension array: [width, height]
 const result = fitter.fit(
   [100,200],
   [400,400]
@@ -70,7 +72,7 @@ const result = fitter.fit(
 ```
 
 ```javascript
-// 4) Support getter function that returns any of the above
+// 4) Also support getter function that returns any of the above
 const result = fitter.fit(
   () => [100,200],
   () => [400,400]
@@ -78,13 +80,41 @@ const result = fitter.fit(
 // result = { changed: true/false, dimension }
 ```
 
-### 2. Watch for box resizing and notifies.
+### 2. Watch for box size change and notifies.
+
+```javascript
+import { Watcher } from 'slimfit';
+
+const watcher = new Watcher({
+  type: 'window',
+  target: null,
+  interval: 500
+})
+.on('change', dimension => { 
+  // do something
+})
+.start();
+
+```
+
+### 3. Watch for box size change and notifies if need to resize again to fit.
 
 
+```javascript
+import { FitWatcher } from 'slimfit';
 
-### 3. Watch for box resizing and notifies if need to resize again to fit.
+const fitWatcher = new FitWatcher(
+  content,
+  container,
+  fitOptions,
+  watchOptions
+)
+.on('change', dimension => { 
+  // do something
+})
+.start();
 
-
+```
 
 ## Install
 
