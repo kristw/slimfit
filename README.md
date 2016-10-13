@@ -6,7 +6,87 @@
 
 Slim library for fitting things
 
-### Install
+## Features
+
+### 1. Fit one box into another box
+
+To fit one box into another, first initialize a fitter with `new Fitter(options)`.
+
+```javascript
+// For basic fitting
+const fitter = new Fitter({
+  mode: 'basic', // if mode is not specified, use 'basic' by default
+  width: '100%', // (optional) 100% of container
+  height: 100    // (optional) 100 pixels
+});
+
+// To keep aspect ratio of the content
+const fitter = new Fitter({
+  mode: 'aspectRatio',
+  ratio: 16/9,
+  maxWidth: 1600, // (optional)
+  maxHeight: 900  // (optional)
+});
+```
+
+The options `width`, `height`, `maxWidth`, `maxHeight` can be:
+
+* `'10%'` => 10% of container
+* `10` => 10 pixels
+* `'10px'` => 10 pixels
+* `'10'` => 10 pixels
+* `null` => (default) will make sure content is not larger than container
+
+Then call `.fit(content, container)`, which will return result with two fields: `changed` and `dimension`.
+
+- `changed` is true if the *content* need to be resized to the returned *dimension* in order to fit the *container*. It is false if the *content* is already fit (content's dimension == returned dimension).
+- `dimension` is a Dimension object, which has field `width` and `height`. This is the dimension that will make the *content* fit *container* based on the given options when constructing the `Fitter`.
+
+```javascript
+// 1) Support dom elements
+const result = fitter.fit(
+  document.querySelector('.content'),
+  document.querySelector('.container')
+);
+// result = { changed: true/false, dimension }
+```
+
+```javascript
+// 2) Support any Object with field width and height
+const result = fitter.fit(
+  { width: 100, height: 200},
+  { width: 400, height: 400}
+);
+// result = { changed: true/false, dimension }
+```
+
+```javascript
+// 3) Support array of dimension [width, height]
+const result = fitter.fit(
+  [100,200],
+  [400,400]
+);
+// result = { changed: true/false, dimension }
+```
+
+```javascript
+// 4) Support getter function that returns any of the above
+const result = fitter.fit(
+  () => [100,200],
+  () => [400,400]
+);
+// result = { changed: true/false, dimension }
+```
+
+### 2. Watch for box resizing and notifies.
+
+
+
+### 3. Watch for box resizing and notifies if need to resize again to fit.
+
+
+
+## Install
 
 ```
 npm install slimfit --save
@@ -18,10 +98,6 @@ or
 bower install slimfit --save
 ```
 
-### Example Usage
-
-TBD
-
 ### Import into your project
 
 ##### Choice 1. Global
@@ -32,7 +108,13 @@ Adding this library via ```<script>``` tag is the simplest way. By doing this, `
 <script src="bower_components/slimfit/dist/slimfit.min.js"></script>
 ```
 
-##### Choice 2: AMD
+##### Choice 2: ES6 Import
+
+```javascript
+import { Fitter, Watcher, FitWatcher } from 'slimfit';
+```
+
+##### Choice 3: AMD
 
 If you use requirejs, this library support AMD out of the box.
 
@@ -47,7 +129,7 @@ require(['slimfit'], function(slimfit) {
 });
 ```
 
-##### Choice 3: node.js / browserify
+##### Choice 4: node.js / browserify
 
 This library also supports usage in commonjs style.
 

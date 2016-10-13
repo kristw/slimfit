@@ -2,4 +2,10 @@
 [Demo](https://kristw.github.io/slimfit) |
 **API Reference**
 
-TBD
+# Dimension
+
+# Fitter
+
+# Watcher
+
+# FitWatcher
