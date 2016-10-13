@@ -3,17 +3,7 @@
 
 const babel = require('rollup-plugin-babel');
 const babelrc = require('babelrc-rollup').default;
-
-// var webpackConfig = require('./webpack.config.js');
-
-// webpackConfig.module.postLoaders = [
-//   // instrument only source files with Istanbul
-//   {
-//     test: /\/[A-Za-z0-9_\-\/]+(?!\.spec)\.js$/,
-//     loader: 'istanbul-instrumenter'
-//   }
-// ];
-// webpackConfig.devtool = 'inline-source-map';
+const istanbul = require('rollup-plugin-istanbul');
 
 module.exports = function (config) {
   config.set({
@@ -40,7 +30,10 @@ module.exports = function (config) {
     rollupPreprocessor: {
       // rollup settings. See Rollup documentation
       plugins: [
-        babel(babelrc()) // ES2015 compiler by the same author as Rollup
+        babel(babelrc()), // ES2015 compiler by the same author as Rollup
+        istanbul({
+          exclude: ['src/**/*.spec.js', 'node_modules/**/*', 'vendor/**/*']
+        })
       ],
       // will help to prevent conflicts between different tests entries
       format: 'iife',
@@ -51,6 +44,12 @@ module.exports = function (config) {
     // possible values: 'dots', 'progress', 'mocha', 'coverage'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ['spec', 'coverage'],
+
+    coverageReporter: {
+      reporters: [
+        { type: 'text' }
+      ]
+    },
 
     // web server port
     port: 9876,
