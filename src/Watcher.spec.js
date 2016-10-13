@@ -73,6 +73,25 @@ describe('Watcher', () => {
     });
   });
 
+  describe('.on(name, listener)', ()=>{
+    it('should add event listener', ()=>{
+      function noop() { }
+      const watcher = new Watcher()
+        .on('change', noop);
+      expect(watcher.listeners.change.indexOf(noop)).toBeGreaterThan(-1);
+    });
+  });
+
+  describe('.off(name, listener)', ()=>{
+    it('should add event listener', ()=>{
+      function noop() { }
+      const watcher = new Watcher()
+        .on('change', noop)
+        .off('change', noop);
+      expect(watcher.listeners.change.indexOf(noop)).toEqual(-1);
+    });
+  });
+
   describe('.start()', () => {
     it('should set watcher.isWatching to true', () => {
       const x = [200, 200];

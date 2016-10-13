@@ -15,7 +15,6 @@
     "babel-loader": "^6.2.0",
     "babel-plugin-transform-object-assign": "^6.1.12",
     "babel-preset-es2015": "^6.3.13",
-    "bower": "^1.6.5",
     "browser-sync": "~2.14.0",
     "del": "^2.2.0",
     "eslint": "^3.1.1",
@@ -66,8 +65,5 @@
   "repository": "kristw/slimfit",
   "bugs": {
     "url": "https://github.com/kristw/slimfit/issues"
-  },
-  "dependencies": {
-    "d3-dispatch": "^1.0.1"
   }
 }

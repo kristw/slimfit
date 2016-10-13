@@ -1,5 +1,4 @@
 import Dimension from './Dimension.js';
-import { dispatch } from 'd3-dispatch';
 import { isRequired } from './Helper.js';
 import throttle from 'lodash/throttle.js';
 
@@ -17,10 +16,11 @@ class Watcher {
     this.target = target;
     this.interval = interval;
 
-    this.dispatcher = dispatch('change');
     this.check = this.check.bind(this);
     this.throttledCheck = throttle(this.check, this.interval);
     this.isWatching = false;
+
+    this.listeners = { change: [] };
   }
 
   hasTargetChanged() {
@@ -37,18 +37,26 @@ class Watcher {
 
   check() {
     if (this.hasTargetChanged()) {
-      this.dispatcher.call('change', this, this.currentDim);
+      this.dispatch('change', this.currentDim);
     }
     return this;
   }
 
-  on(name, listener) {
-    this.dispatcher.on(name, listener);
+  dispatch(name, ...args) {
+    this.listeners[name].forEach(l => l.apply(this, args));
     return this;
   }
 
-  off(name) {
-    this.dispatcher.on(name, null);
+  on(name, listener) {
+    if (this.listeners[name].indexOf(listener) === -1) {
+      this.listeners[name].push(listener);
+    }
+    return this;
+  }
+
+  off(name, listener) {
+    this.listeners[name] = this.listeners[name]
+      .filter(l => l !== listener);
     return this;
   }
 
@@ -82,7 +90,7 @@ class Watcher {
 
   destroy() {
     this.stop();
-    this.off('change');
+    this.listeners.change = [];
     return this;
   }
 }
