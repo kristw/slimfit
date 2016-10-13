@@ -1,4 +1,10 @@
 # slimfit
 
-## v0.0.1
+## v0.2.0
+- Remove `d3-request` from dependency
+
+## v0.1.1
+- Minor bug fixes
+
+## v0.1.0
 - First release
