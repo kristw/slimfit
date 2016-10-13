@@ -37,7 +37,7 @@
     "karma-sourcemap-loader": "~0.3.6",
     "karma-spec-reporter": "~0.0.23",
     "karma-webpack": "~1.7.0",
-    "lodash": "^4.14.2",
+    "lodash-cli": "^4.16.4",
     "pkgfiles": "^2.3.0",
     "run-sequence": "^1.1.5",
     "vinyl-named": "^1.1.0",
@@ -60,7 +60,8 @@
     "preversion": "npm test",
     "version": "npm run build && git add -A dist",
     "postversion": "git push ; git push --tags; pkgfiles",
-    "prepublish": "pkgfiles"
+    "prepublish": "pkgfiles",
+    "build-lodash": "lodash include=debounce,throttle,isFunction exports=node --production -o ./vendor/lodash.custom.js"
   },
   "repository": "kristw/slimfit",
   "bugs": {

@@ -1,6 +1,5 @@
 import Dimension from './Dimension.js';
-import { isRequired } from './Helper.js';
-import throttle from 'lodash/throttle.js';
+import { isRequired, throttle } from './Helper.js';
 
 class Watcher {
   constructor({
