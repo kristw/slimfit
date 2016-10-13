@@ -87,7 +87,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 
-	var _FitWatcher = __webpack_require__(15);
+	var _FitWatcher = __webpack_require__(14);
 
 	Object.defineProperty(exports, 'FitWatcher', {
 	  enumerable: true,
@@ -374,11 +374,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _Dimension2 = _interopRequireDefault(_Dimension);
 
-	var _d3Dispatch = __webpack_require__(5);
-
 	var _Helper = __webpack_require__(2);
 
-	var _throttle = __webpack_require__(6);
+	var _throttle = __webpack_require__(5);
 
 	var _throttle2 = _interopRequireDefault(_throttle);
 
@@ -407,10 +405,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.target = target;
 	    this.interval = interval;
 
-	    this.dispatcher = (0, _d3Dispatch.dispatch)('change');
 	    this.check = this.check.bind(this);
 	    this.throttledCheck = (0, _throttle2.default)(this.check, this.interval);
 	    this.isWatching = false;
+
+	    this.listeners = { change: [] };
 	  }
 
 	  _createClass(Watcher, [{
@@ -430,20 +429,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'check',
 	    value: function check() {
 	      if (this.hasTargetChanged()) {
-	        this.dispatcher.call('change', this, this.currentDim);
+	        this.dispatch('change', this.currentDim);
 	      }
+	      return this;
+	    }
+	  }, {
+	    key: 'dispatch',
+	    value: function dispatch(name) {
+	      var _this = this;
+
+	      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        args[_key - 1] = arguments[_key];
+	      }
+
+	      this.listeners[name].forEach(function (l) {
+	        return l.apply(_this, args);
+	      });
 	      return this;
 	    }
 	  }, {
 	    key: 'on',
 	    value: function on(name, listener) {
-	      this.dispatcher.on(name, listener);
+	      if (this.listeners[name].indexOf(listener) === -1) {
+	        this.listeners[name].push(listener);
+	      }
 	      return this;
 	    }
 	  }, {
 	    key: 'off',
-	    value: function off(name) {
-	      this.dispatcher.on(name, null);
+	    value: function off(name, listener) {
+	      this.listeners[name] = this.listeners[name].filter(function (l) {
+	        return l !== listener;
+	      });
 	      return this;
 	    }
 	  }, {
@@ -480,7 +497,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'destroy',
 	    value: function destroy() {
 	      this.stop();
-	      this.off('change');
+	      this.listeners.change = [];
 	      return this;
 	    }
 	  }]);
@@ -497,108 +514,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// https://d3js.org/d3-dispatch/ Version 1.0.1. Copyright 2016 Mike Bostock.
-	(function (global, factory) {
-	   true ? factory(exports) :
-	  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	  (factory((global.d3 = global.d3 || {})));
-	}(this, function (exports) { 'use strict';
-
-	  var noop = {value: function() {}};
-
-	  function dispatch() {
-	    for (var i = 0, n = arguments.length, _ = {}, t; i < n; ++i) {
-	      if (!(t = arguments[i] + "") || (t in _)) throw new Error("illegal type: " + t);
-	      _[t] = [];
-	    }
-	    return new Dispatch(_);
-	  }
-
-	  function Dispatch(_) {
-	    this._ = _;
-	  }
-
-	  function parseTypenames(typenames, types) {
-	    return typenames.trim().split(/^|\s+/).map(function(t) {
-	      var name = "", i = t.indexOf(".");
-	      if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
-	      if (t && !types.hasOwnProperty(t)) throw new Error("unknown type: " + t);
-	      return {type: t, name: name};
-	    });
-	  }
-
-	  Dispatch.prototype = dispatch.prototype = {
-	    constructor: Dispatch,
-	    on: function(typename, callback) {
-	      var _ = this._,
-	          T = parseTypenames(typename + "", _),
-	          t,
-	          i = -1,
-	          n = T.length;
-
-	      // If no callback was specified, return the callback of the given type and name.
-	      if (arguments.length < 2) {
-	        while (++i < n) if ((t = (typename = T[i]).type) && (t = get(_[t], typename.name))) return t;
-	        return;
-	      }
-
-	      // If a type was specified, set the callback for the given type and name.
-	      // Otherwise, if a null callback was specified, remove callbacks of the given name.
-	      if (callback != null && typeof callback !== "function") throw new Error("invalid callback: " + callback);
-	      while (++i < n) {
-	        if (t = (typename = T[i]).type) _[t] = set(_[t], typename.name, callback);
-	        else if (callback == null) for (t in _) _[t] = set(_[t], typename.name, null);
-	      }
-
-	      return this;
-	    },
-	    copy: function() {
-	      var copy = {}, _ = this._;
-	      for (var t in _) copy[t] = _[t].slice();
-	      return new Dispatch(copy);
-	    },
-	    call: function(type, that) {
-	      if ((n = arguments.length - 2) > 0) for (var args = new Array(n), i = 0, n, t; i < n; ++i) args[i] = arguments[i + 2];
-	      if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
-	      for (t = this._[type], i = 0, n = t.length; i < n; ++i) t[i].value.apply(that, args);
-	    },
-	    apply: function(type, that, args) {
-	      if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
-	      for (var t = this._[type], i = 0, n = t.length; i < n; ++i) t[i].value.apply(that, args);
-	    }
-	  };
-
-	  function get(type, name) {
-	    for (var i = 0, n = type.length, c; i < n; ++i) {
-	      if ((c = type[i]).name === name) {
-	        return c.value;
-	      }
-	    }
-	  }
-
-	  function set(type, name, callback) {
-	    for (var i = 0, n = type.length; i < n; ++i) {
-	      if (type[i].name === name) {
-	        type[i] = noop, type = type.slice(0, i).concat(type.slice(i + 1));
-	        break;
-	      }
-	    }
-	    if (callback != null) type.push({name: name, value: callback});
-	    return type;
-	  }
-
-	  exports.dispatch = dispatch;
-
-	  Object.defineProperty(exports, '__esModule', { value: true });
-
-	}));
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var debounce = __webpack_require__(7),
-	    isObject = __webpack_require__(8);
+	var debounce = __webpack_require__(6),
+	    isObject = __webpack_require__(7);
 
 	/** Used as the `TypeError` message for "Functions" methods. */
 	var FUNC_ERROR_TEXT = 'Expected a function';
@@ -669,12 +586,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(8),
-	    now = __webpack_require__(9),
-	    toNumber = __webpack_require__(12);
+	var isObject = __webpack_require__(7),
+	    now = __webpack_require__(8),
+	    toNumber = __webpack_require__(11);
 
 	/** Used as the `TypeError` message for "Functions" methods. */
 	var FUNC_ERROR_TEXT = 'Expected a function';
@@ -863,7 +780,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports) {
 
 	/**
@@ -900,10 +817,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var root = __webpack_require__(10);
+	var root = __webpack_require__(9);
 
 	/**
 	 * Gets the timestamp of the number of milliseconds that have elapsed since
@@ -929,10 +846,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var freeGlobal = __webpack_require__(11);
+	var freeGlobal = __webpack_require__(10);
 
 	/** Detect free variable `self`. */
 	var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
@@ -944,7 +861,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -955,11 +872,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(8),
-	    isSymbol = __webpack_require__(13);
+	var isObject = __webpack_require__(7),
+	    isSymbol = __webpack_require__(12);
 
 	/** Used as references for various `Number` constants. */
 	var NAN = 0 / 0;
@@ -1027,10 +944,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 13 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObjectLike = __webpack_require__(14);
+	var isObjectLike = __webpack_require__(13);
 
 	/** `Object#toString` result references. */
 	var symbolTag = '[object Symbol]';
@@ -1071,7 +988,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 13 */
 /***/ function(module, exports) {
 
 	/**
@@ -1106,7 +1023,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1159,9 +1076,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'check',
 	    value: function check() {
 	      if (this.hasTargetChanged()) {
-	        var fitResult = this.fit();
-	        if (fitResult.changed) {
-	          this.dispatcher.call('change', this, fitResult.dimension);
+	        var _fit = this.fit();
+
+	        var changed = _fit.changed;
+	        var dimension = _fit.dimension;
+
+	        if (changed) {
+	          this.dispatch('change', dimension);
 	        }
 	      }
 	      return this;
