@@ -1,5 +1,8 @@
 # slimfit
 
+## v0.4.0
+- Rename watchOptions `type` to `mode`
+
 ## v0.3.1
 - Use `lodash-es` instead of custom build
 
