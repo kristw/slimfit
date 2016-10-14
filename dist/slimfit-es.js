@@ -705,19 +705,19 @@ var Watcher = function () {
   function Watcher() {
     var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-    var _ref$type = _ref.type;
-    var type = _ref$type === undefined ? Watcher.TYPE_WINDOW : _ref$type;
+    var _ref$mode = _ref.mode;
+    var mode = _ref$mode === undefined ? Watcher.MODE_WINDOW : _ref$mode;
     var _ref$target = _ref.target;
     var target = _ref$target === undefined ? null : _ref$target;
     var _ref$interval = _ref.interval;
     var interval = _ref$interval === undefined ? 500 : _ref$interval;
     classCallCheck(this, Watcher);
 
-    if (type === Watcher.TYPE_POLLING && !target) {
+    if (mode === Watcher.MODE_POLLING && !target) {
       isRequired('options.target');
     }
 
-    this.type = type;
+    this.mode = mode;
     this.target = target;
     this.interval = interval;
 
@@ -786,9 +786,9 @@ var Watcher = function () {
         if (this.target) {
           this.currentDim = new Dimension(this.target);
         }
-        if (this.type === Watcher.TYPE_WINDOW) {
+        if (this.mode === Watcher.MODE_WINDOW) {
           window.addEventListener('resize', this.throttledCheck);
-        } else if (this.type === Watcher.TYPE_POLLING) {
+        } else if (this.mode === Watcher.MODE_POLLING) {
           this.intervalId = window.setInterval(this.check, this.interval);
         }
         this.isWatching = true;
@@ -799,9 +799,9 @@ var Watcher = function () {
     key: 'stop',
     value: function stop() {
       if (this.isWatching) {
-        if (this.type === Watcher.TYPE_WINDOW) {
+        if (this.mode === Watcher.MODE_WINDOW) {
           window.removeEventListener('resize', this.throttledCheck);
-        } else if (this.type === Watcher.TYPE_POLLING && this.intervalId) {
+        } else if (this.mode === Watcher.MODE_POLLING && this.intervalId) {
           window.clearInterval(this.intervalId);
           this.intervalId = null;
         }
@@ -820,8 +820,8 @@ var Watcher = function () {
   return Watcher;
 }();
 
-Watcher.TYPE_WINDOW = 'window';
-Watcher.TYPE_POLLING = 'polling';
+Watcher.MODE_WINDOW = 'window';
+Watcher.MODE_POLLING = 'polling';
 
 var FitWatcher = function (_Watcher) {
   inherits(FitWatcher, _Watcher);
