@@ -1,5 +1,8 @@
 # slimfit
 
+## v0.3.1
+- Use `lodash-es` instead of custom build
+
 ## v0.3.0
 - Use rollup to bundle instead of webpack
 
