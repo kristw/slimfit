@@ -3,6 +3,7 @@
 
 const babel = require('rollup-plugin-babel');
 const babelrc = require('babelrc-rollup').default;
+const nodeResolve = require('rollup-plugin-node-resolve');
 const istanbul = require('rollup-plugin-istanbul');
 
 module.exports = function (config) {
@@ -30,6 +31,7 @@ module.exports = function (config) {
     rollupPreprocessor: {
       // rollup settings. See Rollup documentation
       plugins: [
+        nodeResolve(),
         babel(babelrc()), // ES2015 compiler by the same author as Rollup
         istanbul({
           exclude: ['src/**/*.spec.js', 'node_modules/**/*', 'vendor/**/*']
