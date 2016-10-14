@@ -1,18 +1,17 @@
 **Introduction** |
-[Demo](https://kristw.github.io/slimfit) |
 [API Reference](https://github.com/kristw/slimfit/blob/master/docs/api.md)
 
 # slimfit [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
 
-Slim library for fitting and resizing boxes. 
+Slim library for fitting and resizing boxes.
 
 ## Definition
 
-For slimfit, a **box** is anything that has dimension: 
+For slimfit, a **box** is anything that has dimension:
 
 1. DOM Element
 2. Array `[width, height]`
-3. Any Object with fields `width` and `height`. 
+3. Any Object with fields `width` and `height`.
 4. Function that returns any of the above.
 
 ## Features
@@ -50,7 +49,7 @@ The fields `width`, `height`, `maxWidth` and `maxHeight` in `fitOptions` can be:
 
 #### const result = fitter.fit(content, container)
 
-Then you can compute how to fit `content` box into a `container` box. This `fit()` function returns an `Object` with two fields: `changed` and `dimension`. **Note that this function DOES NOT RESIZE `content` for you**. It only tells you if you need to resize and if so, what new size should the `content` be. 
+Then you can compute how to fit `content` box into a `container` box. This `fit()` function returns an `Object` with two fields: `changed` and `dimension`. **Note that this function DOES NOT RESIZE `content` for you**. It only tells you if you need to resize and if so, what new size should the `content` be.
 
 - **result.changed:***Boolean* is `true` if `content` need to be resized to the returned `dimension` in order to fit `container`. It is `false` if `content` is already fit. In the latter case, content's dimension is equal to the returned dimension.
 - **result.dimension:***Dimension* is a `Dimension` object, which has field `width` and `height`. This is the dimension that will make the *content* fit *container* based on the given options when constructing the `Fitter`.
@@ -105,13 +104,13 @@ const watcher = new Watcher({
   target: null,
   interval: 500
 })
-.on('change', dimension => { 
-  // do something 
+.on('change', dimension => {
+  // do something
 })
 .start();
 ```
 
-##### watchOptions 
+##### watchOptions
 * **mode:***String* -- A watcher can operates in two modes: `'window'` and `'polling'`. For *window* mode, it will check every time the window is resized. For *polling* mode, it will create a timer and check every `interval`. The latter is useful if the target can be resized without the entire window being resized.
 * **target:***Box* -- Target *box* to check size. The watcher will dispatch event `'change'` if the size of the target has changed from last time. If not specified, will check window size.
 * **interval:***Number* -- time in ms. For *window* mode, it will ensure that the *Watcher* does not fire more often than once every `interval` ms (i.e. throttled). For *polling*, this value will be used as an interval for the timer to check.
@@ -145,7 +144,7 @@ const fitWatcher = new FitWatcher(
   fitOptions,
   watchOptions
 )
-.on('change', dimension => { 
+.on('change', dimension => {
   // do something
 })
 .start();
