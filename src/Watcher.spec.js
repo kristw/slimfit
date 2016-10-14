@@ -8,6 +8,11 @@ describe('Watcher', () => {
       expect(watcher.mode).toEqual(Watcher.MODE_WINDOW);
     });
 
+    it('should use handle null options using default value', () => {
+      const watcher = new Watcher(null);
+      expect(watcher.mode).toEqual(Watcher.MODE_WINDOW);
+    });
+
     it('should create a polling watcher if options.mode is Watcher.MODE_POLLING', () => {
       const watcher = new Watcher({
         mode: Watcher.MODE_POLLING,

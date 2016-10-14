@@ -2,11 +2,13 @@ import Dimension from './Dimension.js';
 import { isRequired, throttle } from './Helper.js';
 
 class Watcher {
-  constructor({
-    mode = Watcher.MODE_WINDOW,
-    target = null,
-    interval = 500,
-  } = {}) {
+  constructor(options = {}) {
+    const {
+      mode = Watcher.MODE_WINDOW,
+      target = null,
+      interval = 500,
+    } = (options || {});
+
     if (mode === Watcher.MODE_POLLING && !target) {
       isRequired('options.target');
     }

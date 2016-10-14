@@ -15,6 +15,10 @@ describe('Fitter', () => {
       const fitter = new Fitter();
       expect(fitter.options.mode).toEqual(Fitter.MODE_BASIC);
     });
+    it('should use handle null options using default value', () => {
+      const fitter = new Fitter(null);
+      expect(fitter.options.mode).toEqual(Fitter.MODE_BASIC);
+    });
     it('should set the mode from given options', () => {
       const fitter = new Fitter({
         mode: Fitter.MODE_ASPECT_RATIO,
