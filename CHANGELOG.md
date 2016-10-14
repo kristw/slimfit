@@ -1,5 +1,8 @@
 # slimfit
 
+## v0.3.0
+- Use rollup to bundle instead of webpack
+
 ## v0.2.0
 - Remove `d3-request` from dependency
 
