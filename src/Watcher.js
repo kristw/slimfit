@@ -3,15 +3,15 @@ import { isRequired, throttle } from './Helper.js';
 
 class Watcher {
   constructor({
-    type = Watcher.TYPE_WINDOW,
+    mode = Watcher.MODE_WINDOW,
     target = null,
     interval = 500,
   } = {}) {
-    if (type === Watcher.TYPE_POLLING && !target) {
+    if (mode === Watcher.MODE_POLLING && !target) {
       isRequired('options.target');
     }
 
-    this.type = type;
+    this.mode = mode;
     this.target = target;
     this.interval = interval;
 
@@ -64,9 +64,9 @@ class Watcher {
       if (this.target) {
         this.currentDim = new Dimension(this.target);
       }
-      if (this.type === Watcher.TYPE_WINDOW) {
+      if (this.mode === Watcher.MODE_WINDOW) {
         window.addEventListener('resize', this.throttledCheck);
-      } else if (this.type === Watcher.TYPE_POLLING) {
+      } else if (this.mode === Watcher.MODE_POLLING) {
         this.intervalId = window.setInterval(this.check, this.interval);
       }
       this.isWatching = true;
@@ -76,9 +76,9 @@ class Watcher {
 
   stop() {
     if (this.isWatching) {
-      if (this.type === Watcher.TYPE_WINDOW) {
+      if (this.mode === Watcher.MODE_WINDOW) {
         window.removeEventListener('resize', this.throttledCheck);
-      } else if (this.type === Watcher.TYPE_POLLING && this.intervalId) {
+      } else if (this.mode === Watcher.MODE_POLLING && this.intervalId) {
         window.clearInterval(this.intervalId);
         this.intervalId = null;
       }
@@ -94,7 +94,7 @@ class Watcher {
   }
 }
 
-Watcher.TYPE_WINDOW = 'window';
-Watcher.TYPE_POLLING = 'polling';
+Watcher.MODE_WINDOW = 'window';
+Watcher.MODE_POLLING = 'polling';
 
 export default Watcher;
