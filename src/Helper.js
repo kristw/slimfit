@@ -1,6 +1,7 @@
-export { default as isFunction } from '../vendor/lodash/isFunction.js';
-export { default as debounce } from '../vendor/lodash/debounce.js';
-export { default as throttle } from '../vendor/lodash/throttle.js';
+export { default as isObject } from 'lodash-es/isObject.js';
+export { default as isFunction } from 'lodash-es/isFunction.js';
+export { default as debounce } from 'lodash-es/debounce.js';
+export { default as throttle } from 'lodash-es/throttle.js';
 
 export function isRequired(name) {
   throw new Error(`Missing parameter ${name}`);

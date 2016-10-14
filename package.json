@@ -30,11 +30,12 @@
     "karma-rollup-plugin": "^0.2.4",
     "karma-sourcemap-loader": "~0.3.6",
     "karma-spec-reporter": "~0.0.23",
-    "lodash-cli": "^4.16.4",
+    "lodash-es": "^4.16.4",
     "pkgfiles": "^2.3.0",
     "rollup": "^0.34.7",
     "rollup-plugin-babel": "^2.6.1",
     "rollup-plugin-istanbul": "^1.1.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
     "uglifyjs": "^2.4.10"
   },
   "scripts": {
@@ -49,7 +50,6 @@
     "version": "npm run build && git add -A dist",
     "postversion": "git push ; git push --tags; pkgfiles",
     "prepublish": "pkgfiles",
-    "build-lodash": "lodash include=debounce,throttle,isFunction modularize exports=es --production -o ./vendor/lodash",
     "rollup": "rollup -c",
     "build": "npm run rollup && uglifyjs dist/slimfit.js -m -c > dist/slimfit.min.js"
   },
