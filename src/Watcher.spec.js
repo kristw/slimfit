@@ -5,20 +5,25 @@ describe('Watcher', () => {
   describe('new Watcher(options)', () => {
     it('should create a window watcher by default', () => {
       const watcher = new Watcher();
-      expect(watcher.type).toEqual(Watcher.TYPE_WINDOW);
+      expect(watcher.mode).toEqual(Watcher.MODE_WINDOW);
     });
 
-    it('should create a polling watcher if options.type is Watcher.TYPE_POLLING', () => {
+    it('should use handle null options using default value', () => {
+      const watcher = new Watcher(null);
+      expect(watcher.mode).toEqual(Watcher.MODE_WINDOW);
+    });
+
+    it('should create a polling watcher if options.mode is Watcher.MODE_POLLING', () => {
       const watcher = new Watcher({
-        type: Watcher.TYPE_POLLING,
+        mode: Watcher.MODE_POLLING,
         target: [200, 200],
       });
-      expect(watcher.type).toEqual(Watcher.TYPE_POLLING);
+      expect(watcher.mode).toEqual(Watcher.MODE_POLLING);
     });
 
-    it('should throw error if options.type is Watcher.TYPE_POLLING but options.target is not specified', () => {
+    it('should throw error if options.mode is Watcher.MODE_POLLING but options.target is not specified', () => {
       expect(() => new Watcher({
-        type: Watcher.TYPE_POLLING,
+        mode: Watcher.MODE_POLLING,
       })).toThrow();
     });
   });
@@ -73,6 +78,25 @@ describe('Watcher', () => {
     });
   });
 
+  describe('.on(name, listener)', ()=>{
+    it('should add event listener', ()=>{
+      function noop() { }
+      const watcher = new Watcher()
+        .on('change', noop);
+      expect(watcher.listeners.change.indexOf(noop)).toBeGreaterThan(-1);
+    });
+  });
+
+  describe('.off(name, listener)', ()=>{
+    it('should add event listener', ()=>{
+      function noop() { }
+      const watcher = new Watcher()
+        .on('change', noop)
+        .off('change', noop);
+      expect(watcher.listeners.change.indexOf(noop)).toEqual(-1);
+    });
+  });
+
   describe('.start()', () => {
     it('should set watcher.isWatching to true', () => {
       const x = [200, 200];
@@ -83,7 +107,7 @@ describe('Watcher', () => {
       expect(watcher.isWatching).toBeTruthy();
       watcher.stop();
     });
-    it('should check after every window.resize event when type is Watcher.TYPE_WINDOW', done => {
+    it('should check after every window.resize event when mode is Watcher.MODE_WINDOW', done => {
       const watcher = new Watcher();
       watcher.throttledCheck = () => {
         watcher.stop();
@@ -92,11 +116,11 @@ describe('Watcher', () => {
       watcher.start();
       window.dispatchEvent(new Event('resize', { bubbles: true, cancelable: false }));
     });
-    it('should check periodically when type is Watcher.TYPE_POLLING', done => {
+    it('should check periodically when mode is Watcher.MODE_POLLING', done => {
       const x = [200, 200];
       function targetGetter() { return x; }
       const watcher = new Watcher({
-        type: Watcher.TYPE_POLLING,
+        mode: Watcher.MODE_POLLING,
         target: targetGetter,
       });
       let i = 0;
@@ -144,7 +168,7 @@ describe('Watcher', () => {
       const x = [200, 200];
       function targetGetter() { return x; }
       const watcher = new Watcher({
-        type: Watcher.TYPE_POLLING,
+        mode: Watcher.MODE_POLLING,
         target: targetGetter,
         interval: 100,
       });

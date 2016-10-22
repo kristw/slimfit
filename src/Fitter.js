@@ -12,7 +12,7 @@ class Fitter {
       ratio = 1,
       maxWidth = null,
       maxHeight = null,
-    } = options;
+    } = (options || {});
 
     if (mode === Fitter.MODE_ASPECT_RATIO) {
       this.wFn = parseModifier(maxWidth);

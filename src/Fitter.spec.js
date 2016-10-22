@@ -15,6 +15,10 @@ describe('Fitter', () => {
       const fitter = new Fitter();
       expect(fitter.options.mode).toEqual(Fitter.MODE_BASIC);
     });
+    it('should use handle null options using default value', () => {
+      const fitter = new Fitter(null);
+      expect(fitter.options.mode).toEqual(Fitter.MODE_BASIC);
+    });
     it('should set the mode from given options', () => {
       const fitter = new Fitter({
         mode: Fitter.MODE_ASPECT_RATIO,
@@ -158,6 +162,20 @@ describe('Fitter', () => {
         expect(fitter.fit([100, 200], [800, 800]))
           .toEqual({
             dimension: new Dimension(400, 225),
+            changed: true,
+          });
+      });
+
+      it('when maxWidth or maxHeight are larger than container', () => {
+        const fitter = new Fitter({
+          mode: Fitter.MODE_ASPECT_RATIO,
+          ratio: 1,
+          maxWidth: 800,
+          maxHeight: 800,
+        });
+        expect(fitter.fit([100, 200], [400, 400]))
+          .toEqual({
+            dimension: new Dimension(800, 800),
             changed: true,
           });
       });

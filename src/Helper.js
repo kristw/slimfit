@@ -1,3 +1,7 @@
+export { default as isObject } from 'lodash-es/isObject.js';
+export { default as isFunction } from 'lodash-es/isFunction.js';
+export { default as debounce } from 'lodash-es/debounce.js';
+export { default as throttle } from 'lodash-es/throttle.js';
 
 export function isRequired(name) {
   throw new Error(`Missing parameter ${name}`);
@@ -10,18 +14,6 @@ export function isDefined(x) {
 export function isNotDefined(x) {
   return x === null || x === undefined;
 }
-
-export const isFunction = (function () {
-  if (typeof /./ !== 'function' && typeof Int8Array !== 'object') {
-    return function (obj) {
-      return typeof obj === 'function' || false;
-    };
-  }
-  return function (fn) {
-    const getType = {};
-    return fn && getType.toString.call(fn) === '[object Function]';
-  };
-}());
 
 export function isElement(obj) {
   return !!(obj && obj.nodeType === 1);

@@ -1,26 +1,27 @@
 import Dimension from './Dimension.js';
-import { dispatch } from 'd3-dispatch';
-import { isRequired } from './Helper.js';
-import throttle from 'lodash/throttle.js';
+import { isRequired, throttle } from './Helper.js';
 
 class Watcher {
-  constructor({
-    type = Watcher.TYPE_WINDOW,
-    target = null,
-    interval = 500,
-  } = {}) {
-    if (type === Watcher.TYPE_POLLING && !target) {
+  constructor(options = {}) {
+    const {
+      mode = Watcher.MODE_WINDOW,
+      target = null,
+      interval = 500,
+    } = (options || {});
+
+    if (mode === Watcher.MODE_POLLING && !target) {
       isRequired('options.target');
     }
 
-    this.type = type;
+    this.mode = mode;
     this.target = target;
     this.interval = interval;
 
-    this.dispatcher = dispatch('change');
     this.check = this.check.bind(this);
     this.throttledCheck = throttle(this.check, this.interval);
     this.isWatching = false;
+
+    this.listeners = { change: [] };
   }
 
   hasTargetChanged() {
@@ -37,18 +38,26 @@ class Watcher {
 
   check() {
     if (this.hasTargetChanged()) {
-      this.dispatcher.call('change', this, this.currentDim);
+      this.dispatch('change', this.currentDim);
     }
     return this;
   }
 
-  on(name, listener) {
-    this.dispatcher.on(name, listener);
+  dispatch(name, ...args) {
+    this.listeners[name].forEach(l => l.apply(this, args));
     return this;
   }
 
-  off(name) {
-    this.dispatcher.on(name, null);
+  on(name, listener) {
+    if (this.listeners[name].indexOf(listener) === -1) {
+      this.listeners[name].push(listener);
+    }
+    return this;
+  }
+
+  off(name, listener) {
+    this.listeners[name] = this.listeners[name]
+      .filter(l => l !== listener);
     return this;
   }
 
@@ -57,9 +66,9 @@ class Watcher {
       if (this.target) {
         this.currentDim = new Dimension(this.target);
       }
-      if (this.type === Watcher.TYPE_WINDOW) {
+      if (this.mode === Watcher.MODE_WINDOW) {
         window.addEventListener('resize', this.throttledCheck);
-      } else if (this.type === Watcher.TYPE_POLLING) {
+      } else if (this.mode === Watcher.MODE_POLLING) {
         this.intervalId = window.setInterval(this.check, this.interval);
       }
       this.isWatching = true;
@@ -69,9 +78,9 @@ class Watcher {
 
   stop() {
     if (this.isWatching) {
-      if (this.type === Watcher.TYPE_WINDOW) {
+      if (this.mode === Watcher.MODE_WINDOW) {
         window.removeEventListener('resize', this.throttledCheck);
-      } else if (this.type === Watcher.TYPE_POLLING && this.intervalId) {
+      } else if (this.mode === Watcher.MODE_POLLING && this.intervalId) {
         window.clearInterval(this.intervalId);
         this.intervalId = null;
       }
@@ -82,12 +91,12 @@ class Watcher {
 
   destroy() {
     this.stop();
-    this.off('change');
+    this.listeners.change = [];
     return this;
   }
 }
 
-Watcher.TYPE_WINDOW = 'window';
-Watcher.TYPE_POLLING = 'polling';
+Watcher.MODE_WINDOW = 'window';
+Watcher.MODE_POLLING = 'polling';
 
 export default Watcher;

@@ -17,13 +17,9 @@ class FitWatcher extends Watcher {
 
   check() {
     if (this.hasTargetChanged()) {
-      const fitResult = this.fit();
-      if (this.fitResult.changed) {
-        this.dispatcher.call(
-          'change',
-          this,
-          fitResult.dimension
-        );
+      const { changed, dimension } = this.fit();
+      if (changed) {
+        this.dispatch('change', dimension);
       }
     }
     return this;

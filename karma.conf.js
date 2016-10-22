@@ -1,16 +1,9 @@
 // Karma configuration
 'use strict';
 
-var webpackConfig = require('./webpack.config.js');
-
-webpackConfig.module.postLoaders = [
-  // instrument only source files with Istanbul
-  {
-    test: /\/[A-Za-z0-9_\-\/]+(?!\.spec)\.js$/,
-    loader: 'istanbul-instrumenter'
-  }
-];
-webpackConfig.devtool = 'inline-source-map';
+const babel = require('rollup-plugin-babel');
+const babelrc = require('babelrc-rollup').default;
+const nodeResolve = require('rollup-plugin-node-resolve');
 
 module.exports = function (config) {
   config.set({
@@ -31,15 +24,31 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'src/**/*.spec.js': ['webpack', 'sourcemap']
+      'src/**/*.spec.js': ['rollup']
     },
 
-    webpack: webpackConfig,
+    rollupPreprocessor: {
+      // rollup settings. See Rollup documentation
+      plugins: [
+        nodeResolve(),
+        babel(babelrc())
+      ],
+      // will help to prevent conflicts between different tests entries
+      format: 'iife',
+      sourceMap: 'inline'
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'mocha', 'coverage'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ['spec', 'coverage'],
+
+    coverageReporter: {
+      reporters: [
+        { type: 'text' },
+        { type: 'html' }
+      ]
+    },
 
     // web server port
     port: 9876,

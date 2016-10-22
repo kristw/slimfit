@@ -1,9 +1,3 @@
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.slimfit = global.slimfit || {})));
-}(this, (function (exports) { 'use strict';
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
@@ -873,12 +867,4 @@ var FitWatcher = function (_Watcher) {
   return FitWatcher;
 }(Watcher);
 
-exports.Dimension = Dimension;
-exports.Fitter = Fitter;
-exports.Watcher = Watcher;
-exports.FitWatcher = FitWatcher;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
-//# sourceMappingURL=slimfit.js.map
+export { Dimension, Fitter, Watcher, FitWatcher };
