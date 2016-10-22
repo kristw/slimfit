@@ -166,6 +166,20 @@ describe('Fitter', () => {
           });
       });
 
+      it('when maxWidth or maxHeight are larger than container', () => {
+        const fitter = new Fitter({
+          mode: Fitter.MODE_ASPECT_RATIO,
+          ratio: 1,
+          maxWidth: 800,
+          maxHeight: 800,
+        });
+        expect(fitter.fit([100, 200], [400, 400]))
+          .toEqual({
+            dimension: new Dimension(800, 800),
+            changed: true,
+          });
+      });
+
       it('when maxWidth or maxHeight are set as percentage, apply them to container dimension to compute bounding box', () => {
         const fitter = new Fitter({
           mode: Fitter.MODE_ASPECT_RATIO,
