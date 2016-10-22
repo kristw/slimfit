@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "main": "dist/slimfit.js",
   "files": [
-    "src/**/*.*",
+    "src/*.*",
     "dist/*.*"
   ],
   "devDependencies": {
