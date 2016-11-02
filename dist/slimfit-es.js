@@ -716,7 +716,7 @@ var Watcher = function () {
     var _ref$target = _ref.target;
     var target = _ref$target === undefined ? null : _ref$target;
     var _ref$interval = _ref.interval;
-    var interval = _ref$interval === undefined ? 500 : _ref$interval;
+    var interval = _ref$interval === undefined ? 200 : _ref$interval;
 
 
     if (mode === Watcher.MODE_POLLING && !target) {
