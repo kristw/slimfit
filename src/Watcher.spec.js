@@ -139,7 +139,7 @@ describe('Watcher', () => {
       watcher.start();
       window.setTimeout(() => {
         x[0] = 100;
-      }, 600);
+      }, 300);
     });
   });
 
