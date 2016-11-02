@@ -2,6 +2,7 @@
 
 ## v0.4.1
 - Fix bugs when `fitOptions` or `watchOptions` is null.
+- Reduce throttle interval to 200ms
 
 ## v0.4.0
 - Rename watchOptions `type` to `mode`

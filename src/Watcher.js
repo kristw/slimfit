@@ -6,7 +6,7 @@ class Watcher {
     const {
       mode = Watcher.MODE_WINDOW,
       target = null,
-      interval = 500,
+      interval = 200,
     } = (options || {});
 
     if (mode === Watcher.MODE_POLLING && !target) {
